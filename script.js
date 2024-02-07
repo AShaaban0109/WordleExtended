@@ -13,6 +13,7 @@ function startNewGame(columns = 5, rows = 6) {
     populateGrid(columns, rows)
 
     const inputField = document.getElementById("guess");
+    inputField.disabled = false;
     inputField.value = ""
     inputField.maxLength = GAME_MODE;
     inputField.addEventListener("keydown", handleEnterKeyPress);
@@ -76,8 +77,9 @@ function submitGuess() {
 
     guessInput.value = "";
 
-    if (guess === TARGET_WORD) {
+    if (guess === TARGET_WORD.toUpperCase()) {
         showToast(`Congratulations! You guessed the word.`)
+        guessInput.disabled = true;
     } else if (guessNumber.length === 6) {
         showToast(`You've used all your guesses. The word was: ${TARGET_WORD}`)
     }
