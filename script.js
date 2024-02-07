@@ -2,14 +2,12 @@ let GAME_MODE = 5  // play game with x letter words
 let TARGET_WORD = "apple";
 let ROWS = []
 let GUESSES = []
-let guessNumber = 0;
 
 function startNewGame(columns = 5, rows = 6) {
     GAME_MODE = columns
     TARGET_WORD = generateRandomWord(GAME_MODE)
     ROWS = []
     GUESSES = []
-    guessNumber = 0;
     populateGrid(columns, rows)
 
     const inputField = document.getElementById("guess");
@@ -67,7 +65,7 @@ function submitGuess() {
     }
     GUESSES.push(guess)
 
-    let currentRow = ROWS[guessNumber]
+    let currentRow = ROWS[GUESSES.length - 1]
     const cells = currentRow.childNodes;
     for (let i = 0; i < cells.length; i++) {
         const cell = cells[i];
@@ -75,16 +73,16 @@ function submitGuess() {
         cell.style.backgroundColor = getCellColor(guess[i], i);
     }
 
-    guessInput.value = "";
-
+    
     if (guess === TARGET_WORD.toUpperCase()) {
         showToast(`Congratulations! You guessed the word.`)
         guessInput.disabled = true;
-    } else if (guessNumber.length === 6) {
+    } else if (GUESSES.length === 6) {
         showToast(`You've used all your guesses. The word was: ${TARGET_WORD}`)
+        guessInput.disabled = true;
     }
     
-    guessNumber++
+    guessInput.value = "";
     document.getElementById("guess").focus();
 
 }
