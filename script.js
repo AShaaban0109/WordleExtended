@@ -1,17 +1,22 @@
+let GAME_MODE = 5  // play game with x letter words
 let TARGET_WORD = "apple";
 let ROWS = []
-let GAME_MODE = 5  // play game with x letter words
+let GUESSES = []
 let guessNumber = 0;
 
 function startNewGame(columns = 5, rows = 6) {
-    ROWS = []
     GAME_MODE = columns
+    TARGET_WORD = generateRandomWord(GAME_MODE)
+    ROWS = []
+    GUESSES = []
     guessNumber = 0;
     populateGrid(columns, rows)
-    TARGET_WORD = generateRandomWord(GAME_MODE)
 
     const inputField = document.getElementById("guess");
+    inputField.value = ""
     inputField.maxLength = GAME_MODE;
+    inputField.addEventListener("keydown", handleEnterKeyPress);
+    inputField.focus();
 }
 
 function populateGrid(columns = 5, rows = 6) {
@@ -36,6 +41,13 @@ function clearGrid(grid) {
     }
 }
 
+function handleEnterKeyPress(event) {
+    if (event.key === "Enter") {
+        submitGuess();
+        document.getElementById("guess").focus();
+    }
+}
+
 function showToast(message) {
     Toastify({
         text: message,
@@ -52,6 +64,7 @@ function submitGuess() {
     if (!isAcceptableGuess(guess)) {
         return;
     }
+    GUESSES.push(guess)
 
     let currentRow = ROWS[guessNumber]
     const cells = currentRow.childNodes;
@@ -70,6 +83,8 @@ function submitGuess() {
     }
     
     guessNumber++
+    document.getElementById("guess").focus();
+
 }
 
 function isAcceptableGuess(guess) {
@@ -81,6 +96,9 @@ function isAcceptableGuess(guess) {
         return false
     } else if (!/^[A-Z]+$/.test(guess)) {
         showToast(`Please enter a word containing only alphabets.`);
+        return false
+    } else if (GUESSES.includes(guess)) {
+        showToast(`Please enter a word which was not previously guessed.`);
         return false
     } else if (!isRealWord(guess)) {
         showToast(`Please enter a real word.`);
@@ -127,6 +145,7 @@ function revealOptimalWord() {
     let expectedInformation = 3.14
 
     showToast(`Optimal word: ${optimalWord} \nExpected Information: ${expectedInformation}`)
+    document.getElementById("guess").focus();
 }
 
 startNewGame()
