@@ -7,9 +7,18 @@ body {
 
 .container {
     max-width: 600px;
-    margin: 0 auto;
+    margin: 10px auto;
     padding: 20px;
     padding-top: 0px;
+    overflow-x: auto; /* Add horizontal scroll if content overflows */
+}
+
+/* Media query for phones */
+@media screen and (max-width: 600px) {
+    .container {
+        max-width: 100%;
+        padding: 10px;
+    }
 }
 
 h1 {
@@ -20,7 +29,11 @@ h1 {
 
 #setting-container {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-evenly;
+    /* justify-content: center; */
+    gap: 5px;
+    overflow-x: auto; /* Add horizontal scroll if content overflows */
+
 }
 
 .gamemode {
@@ -118,4 +131,7 @@ h1 {
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    max-width: 100%; /* Set a maximum width for the container */
+    overflow-x:auto; /* Add horizontal scroll if content overflows */
 }
