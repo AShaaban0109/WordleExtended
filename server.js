@@ -4,6 +4,9 @@ const fs = require('fs');
 const app = express();
 const port = 3000;
 
+const path = require('path');
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Middleware to parse JSON bodies
 app.use(express.json());
 app.use(cors()); // Enable CORS to enable local debugging

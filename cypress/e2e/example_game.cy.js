@@ -1,6 +1,8 @@
-  describe('Play full game', () => {
+const port = 3000;
+
+describe('Play full game', () => {
     it('should wipe the input field after a valid word has been written and the submit button pressed', () => {
-      cy.visit('/');
+      cy.visit(`http://localhost:${port}`);
 
       // Enter text into the input field
       let inputText = 'black'; // Example text
