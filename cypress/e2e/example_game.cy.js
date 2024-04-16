@@ -1,4 +1,4 @@
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 describe('Play full game', () => {
     it('should wipe the input field after a valid word has been written and the submit button pressed', () => {
