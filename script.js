@@ -1,3 +1,4 @@
+const SERVER_ADDRESS = `http://localhost:3000`    // for my local machine. 
 let GAME_MODE = 5  // play game with x letter words
 let TARGET_WORD = "apple";
 let ROWS = []
@@ -5,9 +6,9 @@ let GUESSES = []
 
 function startNewGame(columns = 5, rows = 6) {
     GAME_MODE = columns
-    TARGET_WORD = generateRandomWord(GAME_MODE)
     ROWS = []
     GUESSES = []
+    generateRandomWord(GAME_MODE)
     populateGrid(columns, rows)
 
     const inputField = document.getElementById("guess");
@@ -56,24 +57,43 @@ function showToast(message) {
       }).showToast();
 }
 
-function submitGuess() {
+async function submitGuess() {
     const guessInput = document.getElementById("guess");
     const guess = guessInput.value.trim().toUpperCase();
 
-    if (!isAcceptableGuess(guess)) {
+    if (!await isAcceptableGuess(guess)) {
         return;
     }
     GUESSES.push(guess)
 
     let currentRow = ROWS[GUESSES.length - 1]
     const cells = currentRow.childNodes;
+    let colors = []; // Store colors for each letter
     for (let i = 0; i < cells.length; i++) {
         const cell = cells[i];
-        cell.innerText = guess[i];
-        cell.style.backgroundColor = getCellColor(guess[i], i);
+        const letter = guess[i];
+        cell.innerText = letter;
+        const color = getCellColor(letter, i);
+        cell.style.backgroundColor = color;
+        colors.push(color);
     }
 
-    
+    // Send the guess and colors to the backend
+    try {
+         fetch(`${SERVER_ADDRESS}/send-guess`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                guess: guess,
+                colors: colors
+            })
+        });
+    } catch (error) {
+        console.error('Error:', error);
+    }
+
     if (guess === TARGET_WORD.toUpperCase()) {
         showToast(`Congratulations! You guessed the word.`)
         guessInput.disabled = true;
@@ -87,7 +107,7 @@ function submitGuess() {
 
 }
 
-function isAcceptableGuess(guess) {
+async function isAcceptableGuess(guess) {
     if (guess.length !== GAME_MODE && !/^[A-Z]+$/.test(guess)) {
         showToast(`Please enter a ${GAME_MODE}-letter word containing only alphabets.`);
         return false
@@ -100,17 +120,12 @@ function isAcceptableGuess(guess) {
     } else if (GUESSES.includes(guess)) {
         showToast(`Please enter a word which was not previously guessed.`);
         return false
-    } else if (!isRealWord(guess)) {
+    } else if (!await isRealWord(guess)) {
         showToast(`Please enter a real word.`);
         return false
     } else {
         return true
     }
-}
-
-// TODO
-function isRealWord(guess) {
-    return true
 }
 
 function getCellColor(letter, position) {
@@ -123,29 +138,65 @@ function getCellColor(letter, position) {
     }
 }
 
-// TODO
-function generateRandomWord(wordLength) {
-    switch(wordLength) {
-        case 3:
-            return "cat"
-        case 4:
-            return "bear"
-        case 5:
-            return "apple"
-        case 6:
-            return "jacket"
-        case 7:
-            return "penguin"
+async function generateRandomWord(wordLength) {
+        // Make a request to the server
+        fetch(`${SERVER_ADDRESS}/random-word?wordLength=${wordLength}`)
+        .then(response => response.text())
+        .then(data => {
+            TARGET_WORD = data
+            console.log(TARGET_WORD);
+        })
+        .catch(error => console.error(error));
+}
+
+async function isRealWord(guess) {
+    try {
+        const response = await fetch(`${SERVER_ADDRESS}/check-word?word=${guess}`);
+        const data = await response.json();
+        return data.exists;
+    } catch (error) {
+        console.error(error);
+        return false;
     }
 }
 
-// TODO
 function revealOptimalWord() {
-    let optimalWord = "Apple"
-    let expectedInformation = 3.14
+    let optimalWord = ''
+    let expectedInformation = 0
+    // Make a request to the server
+    fetch(`${SERVER_ADDRESS}/get-optimal-word`)
+    .then(response => response.json())
+    .then(data => {
+        optimalWord = data.optimalWord
+        expectedInformation = data.expectedInformation
+        expectedInformation = expectedInformation.toFixed(2);
+        showToast(`Optimal next word: ${optimalWord} \nExpected Information: ${expectedInformation}`);
+        console.log((`Optimal next word: ${optimalWord} \nExpected Information: ${expectedInformation}`));
 
-    showToast(`Optimal word: ${optimalWord} \nExpected Information: ${expectedInformation}`)
-    document.getElementById("guess").focus();
+    })
+    .catch(error => console.error(error));
 }
+
+// function revealOptimalWord() {
+//     let optimalWord = "Apple";
+
+//     // Send the current word to the backend
+//     fetch('http://localhost:3000/process-word', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         },
+//         body: JSON.stringify({ word: optimalWord })
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         // Processed information received from the backend
+//         const expectedInformation = data.expectedInformation;
+//         showToast(`Optimal next word: ${optimalWord} \nExpected Information: ${expectedInformation}`);
+//         document.getElementById("guess").focus();
+//     })
+//     .catch(error => console.error('Error:', error));
+// }
+
 
 startNewGame()
