@@ -1,8 +1,8 @@
-const port = process.env.PORT || 3000;
+const SERVER_ADDRESS = `http://localhost:3000/`
 
 describe('Play full game', () => {
     it('should wipe the input field after a valid word has been written and the submit button pressed', () => {
-      cy.visit(`http://localhost:${port}`);
+      cy.visit(SERVER_ADDRESS);
 
       // Enter text into the input field
       let inputText = 'black'; // Example text
