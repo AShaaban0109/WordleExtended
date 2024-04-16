@@ -1,4 +1,6 @@
-const SERVER_ADDRESS = `http://localhost:3000`    // for my local machine. 
+// const port = process.env.PORT || 3000;
+// const SERVER_ADDRESS = process.env.SERVER_ADDRESS || `http://localhost:${port}`;
+
 let GAME_MODE = 5  // play game with x letter words
 let TARGET_WORD = "apple";
 let ROWS = []
@@ -80,7 +82,8 @@ async function submitGuess() {
 
     // Send the guess and colors to the backend
     try {
-         fetch(`${SERVER_ADDRESS}/send-guess`, {
+        //  fetch(`${SERVER_ADDRESS}/send-guess`, {
+         fetch(`/send-guess`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -140,7 +143,8 @@ function getCellColor(letter, position) {
 
 async function generateRandomWord(wordLength) {
         // Make a request to the server
-        fetch(`${SERVER_ADDRESS}/random-word?wordLength=${wordLength}`)
+        // fetch(`${SERVER_ADDRESS}/random-word?wordLength=${wordLength}`)
+        fetch(`/random-word?wordLength=${wordLength}`)
         .then(response => response.text())
         .then(data => {
             TARGET_WORD = data
@@ -151,7 +155,8 @@ async function generateRandomWord(wordLength) {
 
 async function isRealWord(guess) {
     try {
-        const response = await fetch(`${SERVER_ADDRESS}/check-word?word=${guess}`);
+        // const response = await fetch(`${SERVER_ADDRESS}/check-word?word=${guess}`);
+        const response = await fetch(`/check-word?word=${guess}`);
         const data = await response.json();
         return data.exists;
     } catch (error) {
@@ -164,7 +169,8 @@ function revealOptimalWord() {
     let optimalWord = ''
     let expectedInformation = 0
     // Make a request to the server
-    fetch(`${SERVER_ADDRESS}/get-optimal-word`)
+    // fetch(`${SERVER_ADDRESS}/get-optimal-word`)
+    fetch(`/get-optimal-word`)
     .then(response => response.json())
     .then(data => {
         optimalWord = data.optimalWord

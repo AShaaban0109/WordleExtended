@@ -3,9 +3,6 @@ const cors = require('cors');
 const fs = require('fs');
 const app = express();
 
-// to make it work with online hosting
-const port = process.env.PORT || 3000;
-
 const path = require('path');
 app.use(express.static(path.join(__dirname, 'public')));
 
