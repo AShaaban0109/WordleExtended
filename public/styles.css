@@ -30,9 +30,8 @@ h1 {
 #setting-container {
     display: flex;
     justify-content: space-evenly;
-    /* justify-content: center; */
     gap: 5px;
-    overflow-x: auto; /* Add horizontal scroll if content overflows */
+    overflow-x: auto;
 
 }
 
@@ -109,7 +108,6 @@ h1 {
 
 .guess-row {
     display: flex;
-    /* justify-content: space-between; */
     gap: 10px;
     margin-bottom: 10px;
 }

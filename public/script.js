@@ -50,9 +50,9 @@ function handleEnterKeyPress(event) {
 function showToast(message) {
     Toastify({
         text: message,
-        duration: 5000, // Duration in milliseconds
-        gravity: "top", // toast position
-        position: 'right', // toast position
+        duration: 5000, 
+        gravity: "top",
+        position: 'right', 
       }).showToast();
 }
 
@@ -138,12 +138,12 @@ function getCellColor(letter, position) {
 }
 
 async function generateRandomWord(wordLength) {
-        // Make a request to the server
+        // Make a request to the server for word of certain length
         fetch(`/random-word?wordLength=${wordLength}`)
         .then(response => response.text())
         .then(data => {
             TARGET_WORD = data
-            console.log(TARGET_WORD);
+            // console.log(TARGET_WORD); // good for debugging
         })
         .catch(error => console.error(error));
 }
@@ -162,7 +162,7 @@ async function isRealWord(guess) {
 function revealOptimalWord() {
     let optimalWord = ''
     let expectedInformation = 0
-    // Make a request to the server
+    // Make a request to the server to reveal optimal word in current game state
     fetch(`/get-optimal-word`)
     .then(response => response.json())
     .then(data => {
@@ -170,8 +170,7 @@ function revealOptimalWord() {
         expectedInformation = data.expectedInformation
         expectedInformation = expectedInformation.toFixed(2);
         showToast(`Optimal next word: ${optimalWord} \nExpected Information: ${expectedInformation}`);
-        console.log((`Optimal next word: ${optimalWord} \nExpected Information: ${expectedInformation}`));
-
+        // console.log((`Optimal next word: ${optimalWord} \nExpected Information: ${expectedInformation}`));
     })
     .catch(error => console.error(error));
 }

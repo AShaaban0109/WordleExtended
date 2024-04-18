@@ -1,6 +1,8 @@
-const app = require('./server'); // Importing the app object from server file
+// Run app by running node serverApp.js
 
-// to make it work with online hosting
+const app = require('./server');
+
+// use process.env to make it work with online hosting
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {

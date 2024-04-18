@@ -1,13 +1,11 @@
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
-const app = express();
-
 const path = require('path');
-app.use(express.static(path.join(__dirname, 'public')));
 
-// Middleware to parse JSON bodies
-app.use(express.json());
+const app = express();
+app.use(express.static(path.join(__dirname, 'public')));  // static render of public dir
+app.use(express.json()); // Middleware to parse JSON bodies
 app.use(cors()); // Enable CORS to enable local debugging
 
 const colors = ['Grey', 'Orange', 'Green'];
@@ -41,7 +39,7 @@ const optimalWords = {
     }
 };
 
-// Define a function to generate a random word of a specified length
+// Function to generate a random word of a specified length
 function generateRandomWord(wordLength) {
     let filepath = `data/${wordLength}_letter_words.txt`
     allWords = fs.readFileSync(filepath, 'utf8').split('\n');
@@ -49,18 +47,6 @@ function generateRandomWord(wordLength) {
     const randomIndex = Math.floor(Math.random() * allWords.length);
     return allWords[randomIndex];
 }
-
-
-// // Define a function to generate a random word of a specified length from old wordlist
-// function generateRandomWord(wordLength) {
-//     let filepath = `oldData/allowed_words.txt`
-//     allWords = fs.readFileSync(filepath, 'utf8').split('\n');
-//     allRemainingWords = [...allWords]  // copy
-//     const randomIndex = Math.floor(Math.random() * allWords.length);
-//     console.log(calculateExpectedInformation('tares'));
-
-//     return allWords[randomIndex];
-// }
 
 // Endpoint to generate a random word of a specified length
 app.get('/random-word', (req, res) => {
@@ -70,7 +56,7 @@ app.get('/random-word', (req, res) => {
     } else {
         gameMode = parseInt(wordLength)
         possiblePatterns = permutationsWithRepetition(colors, gameMode);
-        const randomWord = generateRandomWord(gameMode); // Generate the random word
+        const randomWord = generateRandomWord(gameMode);
         res.send(randomWord); // Send the random word as the response
     }
 });
@@ -110,7 +96,7 @@ function reduceWordList(guess, colors) {
         }
     }
 
-    // for debugging, or as an extra feature later
+    // for debugging. View all possible words left in console
     console.log(`Number of possible words left: ${allRemainingWords.length}`);
     console.log(allRemainingWords);
 }
@@ -184,24 +170,10 @@ function calculateExpectedInformation(word) {
         let patternProb = calculateProbOfPattern(possiblePattern, word);
         patternProbabilitiesForWord.push(patternProb);
     }
-    
-    // console.log(patternProbabilitiesForWord.reduce((a, b) => a + b, 0));    // Equals 1. Useful for debugging.
 
-    // expected info
     let expectedInfo = -patternProbabilitiesForWord.reduce((sum, p) => sum + (p > 0 ? p * Math.log2(p) : 0), 0);
-    // console.log(expectedInfo);
     return expectedInfo;
 }
-
-// function checkPatternMatches(pattern, word, possibleWord) {
-//     return (
-//         checkLetterMatches(pattern, word, possibleWord, 0) &&
-//         checkLetterMatches(pattern, word, possibleWord, 1) &&
-//         checkLetterMatches(pattern, word, possibleWord, 2) &&
-//         checkLetterMatches(pattern, word, possibleWord, 3) &&
-//         checkLetterMatches(pattern, word, possibleWord, 4)
-//     );
-// }
 
 function checkPatternMatches(pattern, word, possibleWord) {
     for (let i = 0; i < word.length; i++) {
@@ -256,9 +228,6 @@ function permutationsWithRepetition(arr, length) {
     return result;
 }
 
-// app.listen(port, () => {
-//   console.log(`Server is listening at http://localhost:${port}`);
-// });
 
 // Export the app object as the default export
 module.exports = app;

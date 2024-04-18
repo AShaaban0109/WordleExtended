@@ -2,5 +2,4 @@ node_modules
 oldData
 cypress/downloads
 cypress/fixtures
-filter.py
 package-lock.json

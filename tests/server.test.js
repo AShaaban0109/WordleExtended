@@ -1,6 +1,6 @@
 const request = require('supertest');
-const app = require('./server'); // Importing the app object from your server file
-const { permutationsWithRepetition } = require('./server'); // Adjust the path as needed
+const app = require('../server'); // Importing the app object from your server file
+const { permutationsWithRepetition } = require('../server'); // Adjust the path as needed
 
 
 describe('Get random word test', () => {
